@@ -1,0 +1,198 @@
+DROP SCHEMA IF EXISTS GESTION_EXTERNA;
+CREATE SCHEMA IF NOT EXISTS GESTION_EXTERNA;
+USE GESTION_EXTERNA;
+
+DROP TABLE IF EXISTS ESTUDIO_JURIDICO;
+CREATE TABLE IF NOT EXISTS ESTUDIO_JURIDICO (
+id_estudio INT,
+nombre_ej VARCHAR(70) NOT NULL,
+dir_ej VARCHAR (70) NOT NULL,
+tel_ej INT NOT NULL,
+cant_abo INT,
+PRIMARY KEY(id_estudio)
+);
+
+DROP TABLE IF EXISTS ABOGADO;
+CREATE TABLE IF NOT EXISTS ABOGADO (
+id_abo INT,
+nombre_abo CHAR (45),
+apellido_abo CHAR (45),
+matri_abo INT,
+cel_abo INT,
+id_estudio INT,
+fechanac_abo DATE,
+PRIMARY KEY (id_abo),
+CONSTRAINT FKabogadoestudio
+FOREIGN KEY (id_estudio) REFERENCES ESTUDIO_JURIDICO (id_estudio)
+);
+
+DROP TABLE IF EXISTS BANCO;
+CREATE TABLE IF NOT EXISTS BANCO (
+id_banco INT,
+nombre_bank CHAR (100) NOT NULL,
+suc_banco INT NOT NULL,
+dir_banco VARCHAR (250) NOT NULL,
+tel_banco VARCHAR (100),
+PRIMARY KEY (id_banco)
+);
+
+DROP TABLE IF EXISTS CAUSA;
+CREATE TABLE IF NOT EXISTS CAUSA (
+id_causa INT,
+nombre_causa VARCHAR (45) NOT NULL,
+rubro CHAR(45),
+localidad VARCHAR (45),
+PRIMARY KEY(id_causa)
+);
+
+DROP TABLE IF EXISTS DERIV;
+CREATE TABLE IF NOT EXISTS DERIV (
+id_deriv INT,
+id_estudio INT NOT NULL,
+estado_deriv ENUM('INICIADO','CONCURSO', 'SENTENCIA', 'IGB') NOT NULL,
+fecha_deriv DATE NOT NULL,
+id_abo INT NOT NULL,
+id_causa INT NOT NULL,
+PRIMARY KEY(id_deriv),
+
+CONSTRAINT FKDERIVESTUDIO
+FOREIGN KEY (id_estudio) REFERENCES ESTUDIO_JURIDICO (id_estudio),
+
+CONSTRAINT FKDERIVABO
+FOREIGN KEY (id_abo) REFERENCES ABOGADO (id_abo),
+
+CONSTRAINT FKDERIVCAUSA
+FOREIGN KEY (id_causa) REFERENCES CAUSA (id_causa)
+);
+
+DROP TABLE IF EXISTS DEUDA;
+CREATE TABLE IF NOT EXISTS DEUDA (
+id_deuda INT,
+monto INT NOT NULL,
+id_banco INT NOT NULL,
+moneda ENUM('pesos','dólares') NOT NULL,
+id_causa INT NOT NULL,
+PRIMARY KEY(id_deuda),
+CONSTRAINT FKDEUDACAUSA
+FOREIGN KEY (id_causa) REFERENCES CAUSA (id_causa),
+CONSTRAINT FKDEUDABANCO
+FOREIGN KEY (id_banco) REFERENCES BANCO (id_banco)
+);
+
+DROP TABLE IF EXISTS PAGOS;
+CREATE TABLE IF NOT EXISTS PAGOS (
+id_pago INT,
+item_pago VARCHAR (100) NOT NULL,
+nro_factura INT,
+id_deriv INT,
+id_estudio INT,
+fecha_pago DATE,
+PRIMARY KEY(id_pago),
+
+CONSTRAINT FKPAGOSDERIV
+FOREIGN KEY (id_deriv) REFERENCES DERIV (id_deriv),
+
+CONSTRAINT FKPAGOSESTUDIO
+FOREIGN KEY (id_estudio) REFERENCES ESTUDIO_JURIDICO (id_estudio)
+);
+
+INSERT INTO `estudio_juridico` (`id_estudio`,`nombre_ej`,`dir_ej`,`tel_ej`,`cant_abo`) VALUES (50001,'Patitucci','Callao 1025',45446072,5);
+INSERT INTO `estudio_juridico` (`id_estudio`,`nombre_ej`,`dir_ej`,`tel_ej`,`cant_abo`) VALUES (50002,'Ares Sirera','Santa Fe 455',45112078,4);
+INSERT INTO `estudio_juridico` (`id_estudio`,`nombre_ej`,`dir_ej`,`tel_ej`,`cant_abo`) VALUES (50003,'Bliffeld','Cerrito 784',45236260,3);
+INSERT INTO `estudio_juridico` (`id_estudio`,`nombre_ej`,`dir_ej`,`tel_ej`,`cant_abo`) VALUES (50004,'Zurita','Tucuman 2380',45221415,2);
+INSERT INTO `estudio_juridico` (`id_estudio`,`nombre_ej`,`dir_ej`,`tel_ej`,`cant_abo`) VALUES (50005,'Peisajovich','Parana 1544',45144785,1);
+
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10001,'Andres','Menna',4851,1167854112,50001,'1980-02-06');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10002,'Baltazar','Gutierrez',3451,1165211447,50002,'1981-05-11');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10003,'Carla','Vera',1448,1169754125,50002,'1980-04-03');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10004,'Daniela','Brito',4625,1134157954,50002,'1978-05-14');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10005,'Estefania','Arias',9887,1156419154,50003,'1960-08-07');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10006,'Florencia','Gonzalez',2615,1154516312,50003,'1985-05-06');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10007,'Gimena','Testa',4135,1124561287,50004,'1983-04-08');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10008,'Horacio','Garcia',2953,1140584665,50001,'1975-08-09');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10009,'Irene','Rodriguez',1232,1134589165,50001,'1978-08-09');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10010,'Juan','Alvarez',2058,1164471515,50001,'1968-05-12');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10011,'Karen','Goyeneche',3650,1161549565,50001,'1985-09-07');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10012,'Lucia','Gomez',9018,1164452323,50002,'1988-10-19');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10013,'Macarena','Alvear',4038,1152013228,50003,'1987-06-06');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10014,'Nahuel','Calvar',4087,1161547855,50004,'1990-05-06');
+INSERT INTO `abogado` (`id_abo`,`nombre_abo`,`apellido_abo`,`matri_abo`,`cel_abo`,`id_estudio`,`fechanac_abo`) VALUES (10015,'Orlando','Barreiro',4785,1164417458,50005,'1981-09-05');
+
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2001,'Banco Provincia',451,'Calle Rivadavia 123, La Plata','(0221) 555-1234');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2002,'Banco Provincia',235,'Avenida San Martín 456, Mar del Plata','(0249) 444-5678');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2003,'Banco Provincia',843,'Calle Mitre 789, Bahía Blanca','(0223) 666-9876');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`)VALUES (2004,'Banco Provincia',65,'Avenida 9 de Julio 321, Avellaneda','(02241) 777-2345');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2005,'Banco Patagonia',201,'Calle Sarmiento 654, Quilmes','(02345) 888-6789');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2006,'Banco Patagonia',49,'Avenida Pellegrini 987, Rosario','(02254) 999-3456');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2007,'Banco Patagonia',487,'Calle Moreno 654, Luján','(02267) 111-4567');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2008,'Banco Nacion',65,'Avenida Independencia 321, San Nicolás de los Arroyos','(02292) 222-7890');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2009,'Banco Nacion',297,'Calle Belgrano 789, Tandil','(02320) 333-8901');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2010,'Banco de la Pampa',654,'Avenida Libertador 654, San Isidro','(02362) 444-9012');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2011,'Banco Galicia',55,'Calle San Martín 987, Pergamino','(02477) 555-0123');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2012,'Banco Galicia',781,'Avenida Centenario 321, Junín','(02392) 666-1234');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2013,'Banco Supervielle',457,'Calle Colón 789, Olavarría','(02281) 777-2345');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2014,'Banco Supervielle',365,'Avenida Alvear 654, Morón','(02296) 888-3456');
+INSERT INTO `banco` (`id_banco`,`nombre_bank`,`suc_banco`,`dir_banco`,`tel_banco`) VALUES (2015,'Banco Supervielle',200,'Calle 25 de Mayo 987, Necochea','(02364) 999-4567');
+
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3001,'SistemasTech S.A.','Tecnologia','La Plata');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3002,'SolucionesEnergéticas S.R.L.','Industria','Mar del Plata');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3003,'ConstruMax Construcciones S.A.','Industria','Bahía Blanca');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3004,'Innovatech Consultores S.R.L. ','Tecnologia','Quilmes');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3005,'AgroFertilizantes Agropecuaria S.A. ','Industria','Luján');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3006,'ServiExpress Logística S.R.L.','Logistica','San Nicolás de los Arroyos');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3007,'ImpreColor Gráfica Digital S.A. ','Servicios','Tandil');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3008,'BioSalud Investigaciones Médicas S.R.L. ','Servicios','San Isidro');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3009,'FoodDelight Alimentos y Bebidas S.A. ','Servicios','Pergamino');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3010,'TecnoSoft Desarrollo de Software S.R.L.','Tecnologia','Junín');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3011,'TextilArte Confecciones S.A.','Industria','Olavarría');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3012,'ConsultoresLegales Asesoría Jurídica S.R.L.','Logistica','Morón');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3013,'EcoSol Energías Renovables S.A.','Industria','Necochea');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3014,'ServiHogar Mantenimiento  S.R.L.','Servicios','Azul');
+INSERT INTO `causa` (`id_causa`,`nombre_causa`,`rubro`,`localidad`) VALUES (3015,'MegaComunicaciones Agencia de Publicidad S.A.','Servicios','Tigre');
+
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44001,50001,'INICIADO','2019-04-15',10001,3010);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44002,50002,'SENTENCIA','2021-08-27',10002,3011);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44003,50003,'CONCURSO','2020-02-10',10005,3012);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44004,50004,'IGB','2022-06-03',10007,3013);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44005,50005,'INICIADO','2019-11-22',10015,3014);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44006,50001,'INICIADO','2021-03-07',10004,3015);INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44007,50002,'INICIADO','2020-09-18',10008,3001);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44008,50003,'INICIADO','2022-01-14',10013,3002);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44009,50004,'SENTENCIA','2020-07-30',10014,3003);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44010,50005,'SENTENCIA','2019-12-05',10015,3004);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44011,50001,'CONCURSO','2022-05-19',10001,3005);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44012,50002,'CONCURSO','2020-03-25',10002,3006);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44013,50003,'SENTENCIA','2021-10-11',10005,3007);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44014,50004,'IGB','2019-08-02',10007,3008);
+INSERT INTO `deriv` (`id_deriv`,`id_estudio`,`estado_deriv`,`fecha_deriv`,`id_abo`,`id_causa`) VALUES (44015,50005,'INICIADO','2022-02-28',10015,3009);
+
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45001,100000,2006,'pesos',3009);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45002,150000,2007,'pesos',3010);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45003,350000,2008,'pesos',3011);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45004,250000,2009,'pesos',3012);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45005,80150,2010,'dólares',3013);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45006,60000,2011,'dólares',3014);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45007,450000,2012,'pesos',3015);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45008,900000,2013,'pesos',3001);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45009,1500000,2003,'pesos',3002);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45010,300000,2004,'pesos',3003);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45011,150000,2005,'dólares',3004);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45012,100000,2014,'pesos',3005);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45013,300000,2015,'pesos',3006);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45014,280000,2001,'pesos',3007);
+INSERT INTO `deuda` (`id_deuda`,`monto`,`id_banco`,`moneda`,`id_causa`) VALUES (45015,155000,2002,'pesos',3008);
+
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16001,'HONORARIOS',515,44001,50001,'2022-01-15');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16002,'GESTORIA',206,44002,50002,'2022-03-27');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16003,'FOTOCOPIAS',514,44003,50003,'2022-05-10');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16004,'ARANCEL',1548,44004,50004,'2022-07-02');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16005,'HONORARIOS',3548,44005,50005,'2022-09-13');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16006,'HONORARIOS',1547,44006,50001,'2022-11-24');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16007,'HONORARIOS',7945,44007,50002,'2023-02-06');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16008,'ARANCEL',211,44008,50003,'2023-04-18');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16009,'HONORARIOS',784,44009,50004,'2023-05-01');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16010,'ARANCEL',999,44010,50005,'2022-02-19');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16011,'HONORARIOS',1548,44011,50001,'2022-04-05');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16012,'HONORARIOS',4488,44012,50002,'2022-06-17');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16013,'ARANCEL',7544,44013,50003,'2022-08-28');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16014,'HONORARIOS',9465,44014,50004,'2022-10-09');
+INSERT INTO `pagos` (`id_pago`,`item_pago`,`nro_factura`,`id_deriv`,`id_estudio`,`fecha_pago`) VALUES (16015,'ARANCEL',1455,44015,50005,'2023-01-23');
